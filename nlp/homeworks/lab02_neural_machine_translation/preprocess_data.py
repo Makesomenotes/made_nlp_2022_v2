@@ -20,15 +20,12 @@ def tokenize_for_bert(x, tokenizer=tokenizer_bert, **kwargs):
     return tokenizer.encode(x, truncation=True, max_length=512, add_special_tokens=False, **kwargs)
 
 
-def process_dataset(path_to_data, reverse_trg=False, bf=False):
+def process_dataset(path_to_data, bf=False):
     SRC = Field(tokenize=tokenize, 
                 init_token = '<sos>', eos_token = '<eos>', lower = True, batch_first=bf) # , batch_first = True
     
-    if reverse_trg:
-        TRG = Field(tokenize=tokenize_reverse,
-                init_token = '<sos>',  eos_token = '<eos>', lower = True, batch_first=bf)
-    else:
-        TRG = Field(tokenize=tokenize,
+ 
+    TRG = Field(tokenize=tokenize,
                 init_token = '<sos>',  eos_token = '<eos>', lower = True, batch_first=bf)
     
     # fixing seed for reproducibility
