@@ -261,22 +261,3 @@ def train_transformer(
         print(f'\t Val. Loss: {valid_loss:.3f} |  Val. PPL: {math.exp(valid_loss):7.3f}')
 
     return model, test_iterator
-
-
-def load_best_model(experiment_name, network, SRC, TRG, test_iterator,
-                    transformer=False, bert=False, bert_model=None):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    if transformer:
-        best_model = init_transformer_architecture(network, SRC, TRG, device)
-    elif bert:
-        best_model = init_model_architecture(network, SRC, TRG, device, bert=True, bert_model=bert_model)
-    else:
-        best_model = init_model_architecture(network, SRC, TRG, device)
-
-    best_model.load_state_dict(torch.load(f'artifacts/{experiment_name}.pt'))
-
-    criterion = torch.nn.CrossEntropyLoss(ignore_index=TRG.vocab.stoi["<pad>"])
-    test_loss = evaluate(best_model, test_iterator, criterion, transformer=transformer)
-
-    print(f'| Test Loss: {test_loss:.3f} | Test PPL: {math.exp(test_loss):7.3f} |')
-    return best_model
